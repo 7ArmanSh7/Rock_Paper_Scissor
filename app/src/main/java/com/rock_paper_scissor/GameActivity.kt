@@ -68,8 +68,8 @@ class GameActivity : AppCompatActivity(){
         val gameScore = sharedPreferences.getInt("gameScore", 0)
         val playerScore = sharedPreferences.getInt("playerScore", 0)
 
-        game = Game()
-        game.getPlayer().setPlayerChoice(playerScore)
+        game = Game();
+        game.getPlayer().setPlayerScore(playerScore)
         game.getGameEngine().setScore(gameScore)
         //updating score
         updateScoreBoards()

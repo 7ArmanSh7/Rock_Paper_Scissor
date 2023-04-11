@@ -21,6 +21,10 @@ class Player {
         return playerScore;
     }
 
+    fun setPlayerScore(score:Int) {
+         playerScore = score;
+    }
+
     fun resetPlayerScore() {
         playerScore=0
     }
