@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exitApp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rock_paper_scissor.GameActivity">
+
+
+    <TextView
+        android:id="@+id/gameEngineScore"
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="@dimen/text_view_height"
+        android:layout_marginBottom="16dp"
+        android:text="@string/game_engine_score"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.156"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginStart="159dp"
+        android:layout_marginEnd="158dp"
+        android:layout_marginBottom="326dp"
+        android:text="@string/go"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.219"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/rock"
+        android:layout_width="@dimen/imege_view_layout_width"
+        android:layout_height="@dimen/imege_view_layout_height"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:outlineAmbientShadowColor="@color/black"
+        android:paddingLeft="@dimen/imageView_padding"
+        android:paddingRight="@dimen/imageView_padding"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.581"
+        app:srcCompat="@drawable/rock" />
+
+    <ImageView
+        android:id="@+id/paper"
+        android:layout_width="@dimen/imege_view_layout_width"
+        android:layout_height="@dimen/imege_view_layout_height"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:outlineAmbientShadowColor="@color/black"
+        android:paddingLeft="@dimen/imageView_padding"
+        android:paddingRight="@dimen/imageView_padding"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588"
+        app:srcCompat="@drawable/paper" />
+
+    <ImageView
+        android:id="@+id/scissors"
+        android:layout_width="@dimen/imege_view_layout_width"
+        android:layout_height="@dimen/imege_view_layout_height"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:outlineAmbientShadowColor="@color/black"
+        android:paddingLeft="@dimen/imageView_padding"
+        android:paddingRight="@dimen/imageView_padding"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/rock"
+        app:layout_constraintHorizontal_bias="0.458"
+        app:layout_constraintStart_toEndOf="@+id/paper"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588"
+        app:srcCompat="@drawable/scissors" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="@dimen/imege_view_layout_width"
+        android:layout_height="@dimen/imege_view_layout_height"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintVertical_bias="0.502" />
+
+    <TextView
+        android:id="@+id/playerScore"
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="@dimen/text_view_height"
+        android:text="@string/player_score"
+        android:textSize="@dimen/scores_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/paper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.103"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.439" />
+
+    <Button
+        android:id="@+id/exitGame"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:text="Exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

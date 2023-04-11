@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="imageView_padding">8dp</dimen>
+    <dimen name="scores_text_size">22sp</dimen>
+    <dimen name="imege_view_layout_height">153dp</dimen>
+    <dimen name="imege_view_layout_width">121dp</dimen>
+    <dimen name="text_view_width">251dp</dimen>
+    <dimen name="text_view_height">54dp</dimen>
+    <dimen name="button_width">130dp</dimen>
+    <dimen name="button_height">55dp</dimen>
+    <dimen name="game_over_winning_message_text_size">50sp</dimen>
+</resources>

@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        app:key="@string/player_name"
+        app:title="@string/player"
+        app:useSimpleSummaryProvider="true" />
+    <SeekBarPreference
+        app:key="score"
+        app:title="Winning Score"
+        app:showSeekBarValue="true"
+        app:defaultValue="5"
+        android:max="10" />
+    <SwitchPreferenceCompat
+        app:key="dark_theme"
+        app:title="@string/pref_title_theme" />
+</PreferenceScreen>
