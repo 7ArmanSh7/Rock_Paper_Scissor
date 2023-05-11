@@ -27,7 +27,7 @@
     <string name="player_score">Player score:</string>
     <string name="green_background">#00FF00</string>
     <string name="white_background">#FFFFFF</string>
-
+    <string name="game_over">Game Over</string>
 
 
 </resources>

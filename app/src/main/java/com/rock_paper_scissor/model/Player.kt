@@ -4,6 +4,16 @@ class Player {
     private var name = ""
     private var playerScore = 0
     private var playerChoice = 0
+    private var playerLocation = ""
+
+
+    fun getPlayerLocation(): String {
+        return playerLocation;
+    }
+
+    fun setPlayerLocation(location:String){
+        playerLocation =  location
+    }
 
     fun getName(): String {
         return name;

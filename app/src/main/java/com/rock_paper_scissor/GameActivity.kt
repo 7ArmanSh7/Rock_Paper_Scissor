@@ -1,8 +1,15 @@
 package com.rock_paper_scissor
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Address
+import android.location.Geocoder
+import android.location.LocationManager
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.Menu
@@ -11,17 +18,24 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.google.android.gms.location.LocationServices
 import com.rock_paper_scissor.model.Game
 import com.rock_paper_scissor.model.GameEngine
 import com.rock_paper_scissor.model.Player
 import com.zybooks.rock_paper_scissor.R
+import java.util.*
 
 
 class GameActivity : AppCompatActivity(){
     private lateinit var playerScoreText:TextView
     private lateinit var gameEngineScoreText:TextView
+    private lateinit var locationText:TextView
     private lateinit var game: Game
     private lateinit var rockImage:ImageView
     private lateinit var paperImage:ImageView
@@ -29,7 +43,15 @@ class GameActivity : AppCompatActivity(){
     private lateinit var gameChoiceImage:ImageView
     private lateinit var gobutton: Button
     private lateinit var exitButton: Button
+    private lateinit var setLocationBtn: Button
     private lateinit var buttons:List<Button>
+    private lateinit var locationManager:LocationManager
+    private var soundMedia: MediaPlayer? = null
+    private lateinit var playbutton: Button
+    private lateinit var pauseButton: Button
+    private lateinit var stopButton: Button
+    private var shouldPlay:Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +60,9 @@ class GameActivity : AppCompatActivity(){
 
     override fun onPause() {
         super.onPause()
+        soundMedia?.stop()
+        soundMedia?.release()
+        soundMedia = null
         // Storing current player and gameEngine score into SharedPreferences
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("scores", MODE_PRIVATE)
@@ -47,18 +72,26 @@ class GameActivity : AppCompatActivity(){
         // from settings page
         gameEdit.putInt("playerScore", game.getPlayer().getPlayerScore())
         gameEdit.putInt("gameScore", game.getGameEngine().getGameEngineScore())
+        gameEdit.putString("location", game.getPlayer().getPlayerLocation())
         gameEdit.commit()
     }
 
     override fun onResume() {
         super.onResume()
+        soundMedia = MediaPlayer.create(this, R.raw.media)
+
         rockImage = findViewById(R.id.rock)
         paperImage = findViewById(R.id.paper)
         scissorsImage = findViewById(R.id.scissors)
         gameChoiceImage = findViewById(R.id.imageView4)
         gobutton = findViewById(R.id.button)
         exitButton = findViewById(R.id.exitGame)
-        buttons = listOf(gobutton,exitButton)
+        playbutton = findViewById(R.id.play)
+        stopButton = findViewById(R.id.stop)
+        pauseButton = findViewById(R.id.pause)
+        exitButton = findViewById(R.id.exitGame)
+        setLocationBtn = findViewById(R.id.setLocation)
+        buttons = listOf(gobutton,exitButton,setLocationBtn)
         //Registering goButton for context menue
         registerForContextMenu(gobutton)
 
@@ -67,12 +100,15 @@ class GameActivity : AppCompatActivity(){
             getSharedPreferences("scores", MODE_PRIVATE)
         val gameScore = sharedPreferences.getInt("gameScore", 0)
         val playerScore = sharedPreferences.getInt("playerScore", 0)
+        val playerLoc = sharedPreferences.getString("location", "")
+
+
 
         game = Game();
         game.getPlayer().setPlayerScore(playerScore)
         game.getGameEngine().setScore(gameScore)
         //updating score
-        updateScoreBoards()
+        updateScoreBoards(playerLoc)
         //Setting image listeners
         setImagesEventHandelers()
         //Setting button event listeners
@@ -82,14 +118,22 @@ class GameActivity : AppCompatActivity(){
         settingsPreferencesChanged()
     }
 
+
     /**
      * It updates player and game scores
      */
-    private fun updateScoreBoards() {
+    private fun updateScoreBoards(playerLoc: String?) {
         playerScoreText = findViewById(R.id.playerScore)
         gameEngineScoreText = findViewById(R.id.gameEngineScore)
+        locationText = findViewById(R.id.location)
         playerScoreText.setText(game.getPlayer().getName()+" score: "+ game.getPlayer().getPlayerScore())
         gameEngineScoreText.setText(getResources().getString(R.string.game_engine_score) + game.getGameEngine().getGameEngineScore())
+        if(playerLoc!=null && playerLoc.length >0){
+            locationText.setText(playerLoc)
+        }
+        else{
+            locationText.setText("From: "+playerLoc)
+        }
     }
 
     /**
@@ -110,6 +154,122 @@ class GameActivity : AppCompatActivity(){
             //Resetting player score and game score sharedPreferences
             resetSharedPrefernces()
         }
+
+        setLocationBtn.setOnClickListener{ view: View ->
+            //Calling the exit dialog to make sure
+            //user wants to exit the game
+            getLocation()
+        }
+
+        playbutton.setOnClickListener{ view: View ->
+            //Plays the sound
+            playSound()
+        }
+
+        pauseButton.setOnClickListener{ view: View ->
+            //Pause the sound
+            pauseSound()
+        }
+
+        stopButton.setOnClickListener{ view: View ->
+            //Stop the sound
+            stopSound()
+        }
+    }
+
+    /**
+     * This method pause the sound
+     */
+    private fun pauseSound() {
+        soundMedia?.pause()
+    }
+
+    /**
+     * This method stops the sound
+     */
+    private fun stopSound() {
+        soundMedia?.stop()
+        soundMedia = MediaPlayer.create(this, R.raw.media)
+    }
+
+    /***
+     * Tt sets the sound when it's apporopriate
+     * Sets looping tp true
+     * and plays the song
+     */
+    private fun playSound() {
+        if(soundMedia==null){
+            soundMedia = MediaPlayer.create(this, R.raw.media)
+            soundMedia?.setLooping(true)
+            soundMedia?.start()
+        }
+        else{
+            soundMedia?.setLooping(true)
+            soundMedia?.start()
+        }
+    }
+
+
+    /**
+     * This method checks for permision
+     * If it's mot given, it regques give
+     * and when it's granted it finds the location coordinates
+     * Using the coordinates and Geocoder library it finds the user address
+     * and sets the location textView to true
+     */
+    private fun getLocation() {
+        val client = LocationServices.getFusedLocationProviderClient(this)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return
+        }
+        client.lastLocation
+            .addOnSuccessListener(this) { location ->
+                if(location!=null){
+                    var latitude = location.latitude
+                    var longitude = location.longitude
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
+                        override fun onGeocode(addresses: MutableList<Address>) {
+                            //The address is a list, we want the admin area
+                            // and country code to show up on the screen
+                            val provience = addresses!![0].adminArea
+                            val countryName = addresses!![0].countryCode
+                            locationText.setText("From: " + provience +","+ countryName)
+                            // Setting the location textview to the user location
+                            game.getPlayer().setPlayerLocation("From: " + provience +","+ countryName)
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        geocoder.getFromLocation(latitude, longitude, 10, geocodeListener)
+                    } else {
+                        var addresses = geocoder.getFromLocation(latitude, longitude, 10)
+                        val cityName = addresses!![0].adminArea
+                        val countryName = addresses!![0].countryCode
+                        locationText.setText("From: " + cityName +","+ countryName)
+                        game.getPlayer().setPlayerLocation("From: " + cityName +","+ countryName)
+                    }
+                }
+            }
+
+
+    }
+
+    val requestPermissionLauncher = registerForActivityResult(
+        RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // App can request location
+            getLocation()
+        }
     }
 
     /**
@@ -126,7 +286,6 @@ class GameActivity : AppCompatActivity(){
             game.getPlayer().setName(playerNamePreference.toString())
             setPlayerScoreCard(game.getPlayer().getName())
         }
-
     }
 
     /**
@@ -258,6 +417,9 @@ class GameActivity : AppCompatActivity(){
         }
     }
 
+    /**
+     * It calculates the player and game enginer score based on their current choice
+     */
     fun calculateGameScore(computerChoice: ImageView){
         val player: Player = game.getPlayer()
         val gameEngine: GameEngine = game.getGameEngine()
@@ -302,16 +464,16 @@ class GameActivity : AppCompatActivity(){
         val player: Player = game.getPlayer()
         val gameEngine: GameEngine = game.getGameEngine()
         if(gameEngine.getGameEngineScore()>=game.getMaxScore()){
-            game.getGameEngine().setScore(0)
-            game.getPlayer().setPlayerChoice(0)
+            game.getGameEngine().resetScore()
+            game.getPlayer().resetPlayerScore()
             val newIntent = Intent(applicationContext,   GameOverActivity::class.java)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(newIntent)
             finish()
         }
         else if(player.getPlayerScore()>=game.getMaxScore()){
-            game.getGameEngine().setScore(0)
-            game.getPlayer().setPlayerChoice(0)
+            game.getGameEngine().resetScore()
+            game.getPlayer().resetPlayerScore()
             val newIntent = Intent(applicationContext,   WinningScreenActivity::class.java)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(newIntent)

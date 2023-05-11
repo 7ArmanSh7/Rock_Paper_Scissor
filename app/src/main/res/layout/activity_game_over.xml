@@ -7,31 +7,31 @@
     tools:context="com.rock_paper_scissor.GameOverActivity">
 
     <TextView
-        android:id="@+id/gameOverScreen"
-        android:layout_width="316dp"
-        android:layout_height="276dp"
+        android:id="@+id/gameOverScreenText"
+        android:layout_width="381dp"
+        android:layout_height="156dp"
         android:gravity="center"
-        android:text="Game Over"
+        android:text="@string/game_over"
         android:textColor="#E11616"
-        android:textSize="@dimen/game_over_winning_message_text_size"
+        android:textSize="28sp"
         app:layout_constraintBottom_toTopOf="@+id/gameOver"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.638" />
+        app:layout_constraintVertical_bias="0.819" />
 
     <Button
         android:id="@+id/gameOver"
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"
-        android:layout_marginBottom="232dp"
+        android:layout_marginBottom="336dp"
         android:background="@color/teal_200"
         android:text="@string/playAgain"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -39,10 +39,30 @@
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"
         android:text="@string/exit"
-        app:layout_constraintBottom_toTopOf="@+id/gameOverScreen"
+        app:layout_constraintBottom_toTopOf="@+id/gameOverScreenText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.949"
+        app:layout_constraintHorizontal_bias="0.836"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275" />
+        app:layout_constraintVertical_bias="0.431" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameOver"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:id="@+id/face"
+            android:layout_width="194dp"
+            android:layout_height="167dp"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            app:srcCompat="@drawable/face" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
